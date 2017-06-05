@@ -1,0 +1,34 @@
+
+commands:
+  user:
+    class: Account\Account
+    method: userCommand
+    description: Modify accounts.
+    arguments:
+      username:
+        description: username
+    options:
+      password:
+        short_name: -p
+        description: new password
+        action: Password
+      create:
+        short_name: -c
+        description: create account
+        action: StoreTrue
+      delete:
+        short_name: -d
+        description: delete account
+        action: StoreTrue
+      authenticator:
+        short_name: -a
+        description: authenticator class for this account
+        action: StoreString
+      role_add:
+        short_name: -r
+        description: add role
+        action: StoreString
+      role_remove:
+        short_name: -R
+        description: remove role
+        action: StoreString

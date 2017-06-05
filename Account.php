@@ -1,8 +1,9 @@
 <?php
 
 namespace Account;
-use kernel;
+use Exception;
 use ErrorException;
+use kernel;
 
 /**
  * Basic user authenticator class.
@@ -313,5 +314,92 @@ abstract class Account extends \Core\Module
 
 		/* try to match */
 		return $this->passwordVerify($username, $password, $hash);
+	}
+
+	public static function userCommand($command, $args, $options)
+	{
+		$kernel   = kernel::getInstance();
+		$username = $args['username'];
+
+		/* find class */
+		$usertype = null;
+		if ($options['authenticator'])
+		{
+			$usertype = $options['authenticator'];
+		}
+		else
+		{
+			$authenticators = $kernel->getConfigValue('modules', 'Core\Session', 'authenticators');
+			if (count($authenticators) > 0)
+			{
+				$usertype = $authenticators[0];
+			}
+		}
+
+		if (!class_exists($usertype))
+		{
+			kernel::log(LOG_ERR, 'Invalid account class: ' . $usertype);
+			exit(1);
+		}
+
+		/* find or create account */
+		$account = null;
+		if ($options['create'])
+		{
+			$account = new $usertype();
+			$account = $account->create($username);
+			if (!$account)
+			{
+				kernel::log(LOG_ERR, 'Failed to create new account: ' . $username);
+				exit(1);
+			}
+			kernel::log(LOG_INFO, 'New account created: ' . $username);
+		}
+		else
+		{
+			try
+			{
+				$account = new $usertype($username);
+			}
+			catch (Exception $e)
+			{
+				$account = null;
+			}
+		}
+
+		if (!$account)
+		{
+			kernel::log(LOG_ERR, 'Account not found (account class ' . $usertype . '): ' . $username);
+			exit(1);
+		}
+
+		/* delete account */
+		if ($options['delete'])
+		{
+			$account->delete();
+			kernel::log(LOG_INFO, 'Account deleted: ' . $username);
+			exit(0);
+		}
+
+		/* set password */
+		if ($options['password'])
+		{
+			$account->setPassword($options['password']);
+			kernel::log(LOG_INFO, 'Password set for account: ' . $username);
+		}
+
+		/* add role */
+		if ($options['role_add'])
+		{
+			$account->addRole($options['role_add']);
+			kernel::log(LOG_INFO, 'Role added to account: ' . $username);
+		}
+
+		/* remove role */
+		if ($options['role_remove'])
+		{
+			$account->removeRole($options['role_remove']);
+			kernel::log(LOG_INFO, 'Role removed from account: ' . $username);
+		}
 	}
 }
