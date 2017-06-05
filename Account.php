@@ -183,7 +183,7 @@ abstract class Account extends \Core\Module
 	public static function passwordHash($username, $password)
 	{
 		// return password_hash($password, PASSWORD_DEFAULT);
-		return crypt($password, '$6$' . Compose::unique(8) . '$');
+		return crypt($password, '$6$' . \Core\Compose::unique(8) . '$');
 	}
 
 	public static function passwordVerify($username, $password, $hash)
