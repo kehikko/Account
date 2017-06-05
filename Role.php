@@ -6,7 +6,7 @@ use Exception;
 /**
  * Basic role class.
  */
-abstract class Role extends \Core\Module
+class Role extends \Core\Module
 {
 	/* list of roles */
 	protected $roles = array();
