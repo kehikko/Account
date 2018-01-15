@@ -13,7 +13,7 @@ class Account extends \Account\Account
 	public function __construct($username = false, $password = false)
 	{
 		parent::__construct($username);
-		$this->em = $this->kernel->getEntityManager();
+		$this->em = get_entity_manager();
 
 		/* empty user */
 		if ($username === false)
