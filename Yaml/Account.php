@@ -215,7 +215,7 @@ class Account extends \Account\Account
 		$file = $this->getModuleValue('file');
 		if (!$file)
 		{
-			$file = '{path:config}/users.yaml';
+			$file = '{path:config}/users.yml';
 		}
 		$file = $this->kernel->expand($file);
 		if (!file_exists($file))
@@ -238,7 +238,7 @@ class Account extends \Account\Account
 		$file = $this->getModuleValue('file');
 		if (!$file)
 		{
-			$file = '{path:config}/users.yaml';
+			$file = '{path:config}/users.yml';
 		}
 		$file = $this->kernel->expand($file);
 		kernel::yaml_write($file, $data);
